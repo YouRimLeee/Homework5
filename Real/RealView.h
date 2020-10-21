@@ -40,6 +40,16 @@ protected:
 // 생성된 메시지 맵 함수
 protected:
 	DECLARE_MESSAGE_MAP()
+public:
+	int Length(CPoint m_pt1, CPoint m_pt2);
+	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
+	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
+	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
+	CPoint m_pt1;
+	CPoint m_pt2;
+	COLORREF m_brushColor;
+	int m_Radius;
+	int rad;
 };
 
 #ifndef _DEBUG  // RealView.cpp의 디버그 버전

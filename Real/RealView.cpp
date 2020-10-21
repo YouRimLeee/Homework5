@@ -27,6 +27,9 @@ BEGIN_MESSAGE_MAP(CRealView, CView)
 	ON_COMMAND(ID_FILE_PRINT, &CView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_DIRECT, &CView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_PREVIEW, &CView::OnFilePrintPreview)
+	ON_WM_LBUTTONDOWN()
+	ON_WM_LBUTTONUP()
+	ON_WM_MOUSEMOVE()
 END_MESSAGE_MAP()
 
 // CRealView 생성/소멸
@@ -51,12 +54,16 @@ BOOL CRealView::PreCreateWindow(CREATESTRUCT& cs)
 
 // CRealView 그리기
 
-void CRealView::OnDraw(CDC* /*pDC*/)
+void CRealView::OnDraw(CDC* pDC)
 {
 	CRealDoc* pDoc = GetDocument();
 	ASSERT_VALID(pDoc);
 	if (!pDoc)
 		return;
+	CBrush brush;
+	brush.CreateSolidBrush(RGB(rad % 256, 0, 0));
+	pDC->SelectObject(&brush);
+	pDC->Ellipse(m_pt1.x - m_Radius, m_pt1.y - m_Radius, m_pt1.x + m_Radius, m_pt1.y + m_Radius);
 
 	// TODO: 여기에 원시 데이터에 대한 그리기 코드를 추가합니다.
 }
@@ -103,3 +110,41 @@ CRealDoc* CRealView::GetDocument() const // 디버그되지 않은 버전은 인
 
 
 // CRealView 메시지 처리기
+
+
+int CRealView::Length(CPoint m_pt1, CPoint m_pt2)
+{
+	// TODO: 여기에 구현 코드 추가.
+	rad = sqrt((m_pt2.x - m_pt1.x) * (m_pt2.x - m_pt1.x) + (m_pt2.y - m_pt1.y) * (m_pt2.y - m_pt1.y));
+	return (rad);
+}
+
+
+void CRealView::OnLButtonDown(UINT nFlags, CPoint point)
+{
+	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
+	m_pt1 = point;
+	CView::OnLButtonDown(nFlags, point);
+}
+
+
+void CRealView::OnLButtonUp(UINT nFlags, CPoint point)
+{
+	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
+	m_pt2 = point;
+	Invalidate();
+	CView::OnLButtonUp(nFlags, point);
+}
+
+
+void CRealView::OnMouseMove(UINT nFlags, CPoint point)
+{
+	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
+	if (nFlags & MK_LBUTTON)
+	{
+		m_pt2 = point;
+		m_Radius = Length(m_pt1, m_pt2);
+		Invalidate();
+	}
+	CView::OnMouseMove(nFlags, point);
+}
